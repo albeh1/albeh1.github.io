@@ -2,10 +2,164 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My GitHub Website</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albeh's Place</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #0076ff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            padding: 40px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        p { font-size: 1.2rem; color: #666; }
+        
+        /* Secret Console Styles */
+        .terminal-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+        #console-area {
+            display: none;
+            background: #1e1e1e;
+            color: #33ff33;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        #output { height: 180px; overflow-y: auto; margin-bottom: 10px; white-space: pre-wrap; }
+        .input-line { display: flex; }
+        .input-line span { margin-right: 10px; }
+        #cmd {
+            background: transparent;
+            border: none;
+            color: #33ff33;
+            font-family: inherit;
+            font-size: 1rem;
+            flex: 1;
+            outline: none;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Core Content with Fixes -->
     <h1>Hello, World!</h1>
-    <p>Welcome to my place where i pit fun stuff for you all!</p>
+    <p id="main-text">Welcome to my place where i <strong>put</strong> fun stuff for you all!</p>
+
+    <!-- Hidden Activation Mechanism -->
+    <button class="terminal-btn" onclick="toggleConsole()">Open Secret Sandbox 🔓</button>
+
+    <!-- The Easter Egg Console -->
+    <div id="console-area">
+        <div id="output">SYSTEM INITIALIZED...
+Type 'help' to see hidden games, tricks, and commands!</div>
+        <div class="input-line">
+            <span>&gt;</span>
+            <input type="text" id="cmd" autocomplete="off" autofocus>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Secret Panel
+        function toggleConsole() {
+            const panel = document.getElementById('console-area');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('cmd').focus();
+        }
+
+        // Secret Game States
+        let targetNum = Math.floor(Math.random() * 100) + 1;
+        let guessMode = false;
+
+        const cmdInput = document.getElementById('cmd');
+        const outputDiv = document.getElementById('output');
+
+        cmdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                let input = cmdInput.value.trim().toLowerCase();
+                printLine("> " + cmdInput.value);
+                handleCommand(input);
+                cmdInput.value = '';
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }
+        });
+
+        function printLine(text) {
+            outputDiv.innerHTML += "\n" + text;
+        }
+
+        function handleCommand(cmd) {
+            // Game Loop for Number Guessing
+            if (guessMode) {
+                let val = parseInt(cmd);
+                if (isNaN(val)) {
+                    printLine("Exited guessing game.");
+                    guessMode = false;
+                } else if (val === targetNum) {
+                    printLine("🎉 CORRECT! You beat the system. Resetting number...");
+                    targetNum = Math.floor(Math.random() * 100) + 1;
+                    guessMode = false;
+                } else {
+                    printLine(val < targetNum ? "Too low! Guess again (or type exit):" : "Too high! Guess again (or type exit):");
+                }
+                return;
+            }
+
+            // Standard Terminal Commands
+            switch(cmd) {
+                case 'help':
+                    printLine("Available commands:\n[game] - Play high/low guessing game\n[dark] - Turn on dark mode\n[light] - Turn on light mode\n[roll] - Roll a lucky 6-sided die\n[hack] - Run a fake hacker mainframe matrix\n[destroy] - Mess up the page text\n[clear] - Clear terminal window");
+                    break;
+                case 'game':
+                    printLine("🎲 Number Guessing Game Active! Guess a number between 1 and 100:");
+                    guessMode = true;
+                    break;
+                case 'dark':
+                    document.documentElement.style.setProperty('--bg-color', '#121212');
+                    document.documentElement.style.setProperty('--text-color', '#ffffff');
+                    printLine("Dark mode activated 🌙");
+                    break;
+                case 'light':
+                    document.documentElement.style.setProperty('--bg-color', '#ffffff');
+                    document.documentElement.style.setProperty('--text-color', '#333333');
+                    printLine("Light mode activated ☀️");
+                    break;
+                case 'roll':
+                    printLine("🎲 You rolled a: " + (Math.floor(Math.random() * 6) + 1));
+                    break;
+                case 'hack':
+                    printLine("ACCESSING MAINFRAME... BYPASSING FIREWALL...\n[||||||||||||||||||||||] 100%\nACCESS GRANTED. You are now a certified master hacker.");
+                    break;
+                case 'destroy':
+                    document.getElementById('main-text').innerHTML = "W̷e̶l̶c̶o̷m̵e̶ ̷t̶o̶ ̸m̵y̷ ̵g̵l̵i̴t̶c̶h̷e̸d̴ ̷w̷o̶r̵l̵d̶!̶!̵";
+                    printLine("Core text system corrupted ⚠️");
+                    break;
+                case 'clear':
+                    outputDiv.innerHTML = "Terminal cleared.";
+                    break;
+                default:
+                    printLine("Unknown command. Type 'help' for secrets.");
+            }
+        }
+    </script>
 </body>
 </html>
+
